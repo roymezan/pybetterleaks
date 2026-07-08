@@ -23,7 +23,8 @@ RUN case "${TARGETARCH}" in \
     && rm /tmp/go.tgz \
     && /usr/local/go/bin/go version
 ENV PATH="/usr/local/go/bin:${PATH}"
-RUN python -m pip install --upgrade pip \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python -m pip install --upgrade pip \
     && python -m pip install "build>=1.2.2" "setuptools>=70.1" wheel
 
 COPY pyproject.toml setup.py README.md LICENSE ./
@@ -35,7 +36,9 @@ RUN rm -f python/pybetterleaks/native/*.dll \
     python/pybetterleaks/native/*.dylib \
     python/pybetterleaks/native/*.h \
     python/pybetterleaks/native/*.so
-RUN python scripts/build_native.py
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/root/go/pkg/mod \
+    python scripts/build_native.py
 RUN python -m build --wheel --no-isolation --outdir /tmp/pybetterleaks-wheelhouse
 
 FROM ${PYTHON_IMAGE} AS runtime
