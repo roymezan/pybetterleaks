@@ -30,7 +30,7 @@ claimed target platforms.
 
 ## CI Release Flow
 
-- Push a tag like `v0.2.0`.
+- Push a tag like `v0.3.0`.
 - GitHub Actions builds wheels on Linux, macOS, and Windows.
 - Every wheel must install and run `scripts/wheel_smoke.py`.
 - The Docker E2E workflow should build a local wheel, install it from `/tmp`,
