@@ -100,9 +100,17 @@ def inspect_wheel(
         wheel_metadata = wheel.read(dist_info_path(name, "WHEEL")).decode("utf-8")
         if "Root-Is-Purelib: false" not in wheel_metadata:
             raise SystemExit(f"{path.name}: WHEEL metadata must mark Root-Is-Purelib as false")
-        expected_tag = f"Tag: {name.python_tag}-{name.abi_tag}-{name.platform_tag}"
-        if expected_tag not in wheel_metadata:
-            raise SystemExit(f"{path.name}: WHEEL metadata is missing {expected_tag!r}")
+        metadata_tags = {
+            line.removeprefix("Tag: ").strip()
+            for line in wheel_metadata.splitlines()
+            if line.startswith("Tag: ")
+        }
+        expected_tags = expected_metadata_tags(name)
+        missing_tags = expected_tags - metadata_tags
+        if missing_tags:
+            raise SystemExit(
+                f"{path.name}: WHEEL metadata is missing tag(s): {sorted(missing_tags)!r}"
+            )
 
 
 def parse_wheel_name(path: Path) -> WheelName:
@@ -138,6 +146,13 @@ def native_suffix_matches_platform(native_entry: str, platform_tag: str) -> bool
     if "linux" in platform_tag:
         return native_entry.endswith(".so")
     return False
+
+
+def expected_metadata_tags(name: WheelName) -> set[str]:
+    platform_tags = name.platform_tag.split(".")
+    return {
+        f"{name.python_tag}-{name.abi_tag}-{platform_tag}" for platform_tag in platform_tags
+    }
 
 
 def normalize_distribution(name: str) -> str:

@@ -58,6 +58,39 @@ def test_inspect_wheels_accepts_py3_none_platform_wheel(tmp_path: Path) -> None:
     assert "Inspected 1 wheel" in result.stdout
 
 
+def test_inspect_wheels_accepts_compressed_platform_tags(tmp_path: Path) -> None:
+    wheel = (
+        tmp_path
+        / "pybetterleaks-0.5.0-cp313-cp313-manylinux1_x86_64."
+        "manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl"
+    )
+    write_wheel(
+        wheel,
+        native_name="pybetterleaks/native/libbetterleaks_py.so",
+        tags=[
+            "cp313-cp313-manylinux1_x86_64",
+            "cp313-cp313-manylinux_2_28_x86_64",
+            "cp313-cp313-manylinux_2_5_x86_64",
+        ],
+        version="0.5.0",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "inspect_wheels.py"),
+            str(tmp_path),
+            "--expected-version",
+            "0.5.0",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "Inspected 1 wheel" in result.stdout
+
+
 def test_inspect_wheels_rejects_universal_wheel(tmp_path: Path) -> None:
     wheel = tmp_path / "pybetterleaks-0.5.0-py3-none-any.whl"
     write_wheel(
@@ -139,7 +172,18 @@ def test_checksums_verify_detects_mismatch(tmp_path: Path) -> None:
     assert "checksum mismatch" in result.stderr
 
 
-def write_wheel(path: Path, *, native_name: str, tag: str, version: str) -> None:
+def write_wheel(
+    path: Path,
+    *,
+    native_name: str,
+    version: str,
+    tag: str | None = None,
+    tags: list[str] | None = None,
+) -> None:
+    metadata_tags = tags or [tag]
+    if any(metadata_tag is None for metadata_tag in metadata_tags):
+        raise AssertionError("write_wheel requires tag or tags")
+
     dist_info = f"pybetterleaks-{version}.dist-info"
     with zipfile.ZipFile(path, "w") as wheel:
         wheel.writestr("pybetterleaks/__init__.py", "")
@@ -151,7 +195,7 @@ def write_wheel(path: Path, *, native_name: str, tag: str, version: str) -> None
                 [
                     "Wheel-Version: 1.0",
                     "Root-Is-Purelib: false",
-                    f"Tag: {tag}",
+                    *(f"Tag: {metadata_tag}" for metadata_tag in metadata_tags),
                     "",
                 ]
             ),
