@@ -15,23 +15,65 @@ image. No runtime `subprocess`.
 pip install pybetterleaks
 ```
 
+The power of Betterleaks with Gitleaks-style secret detection, in the palm of
+your Python hand:
+
+```python
+from pybetterleaks import scan_text
+
+result = scan_text(
+    "AGE-SECRET-KEY-"
+    + "1QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7LQPZRY9X8GF2TVDW0S3JN54KHCE",
+    validation=True,
+    redact=True,
+)
+
+for finding in result.findings:
+    print(f"{finding.rule_id}: {finding.secret}")
+    # age-secret-key: REDACTED
+```
+
+Need app-specific rules, validation metadata, and safe logs? Keep redaction on,
+let Betterleaks' built-in classifier shape the finding, and ask the native
+engine to validate when the rule supports it:
+
 ```python
 from pybetterleaks import BetterleaksConfig, Rule, scan_text
 
 config = BetterleaksConfig(
     rules=[
-        Rule(
-            id="internal-token",
+        Rule.prefixed_token_rule(
+            id="service-token",
             description="Internal service token",
-            regex=r"INTERNAL_[A-Z0-9]{16}",
-            keywords=["INTERNAL_"],
+            prefix="SERVICE_TOKEN_",
+            token_pattern=r"[A-Z0-9]{16}",
+            validate='{"result":"needs_validation","provider":"internal"}',
         )
     ]
 )
 
-result = scan_text("INTERNAL_0123456789ABCDEF", config=config)
-for finding in result.findings:
-    print(f"{finding.rule_id}: {finding.secret}")
+result = scan_text(
+    "SERVICE_TOKEN_0123456789ABCDEF",
+    config=config,
+    validation=True,
+    redact=True,
+)
+
+finding = result.findings[0]
+print(finding.rule_id)           # service-token
+print(finding.secret)            # REDACTED
+print(finding.validation_status) # needs_validation
+print(finding.validation_meta["provider"]) # internal
+```
+
+The same importable API scans directories and Git worktrees without a
+Betterleaks CLI process:
+
+```python
+from pybetterleaks import scan_dir, scan_git
+
+dir_result = scan_dir("src", validation=True, redact=True)
+git_result = scan_git(".", scope="worktree", redact=True)
 ```
 
 PyBetterleaks wraps the Betterleaks Go engine through a tiny `ctypes` JSON ABI
