@@ -85,6 +85,17 @@ else:
         print(f"{error.code}: {error.message}")
 ```
 
+Services that prefer exception-style control flow can opt in per call:
+
+```python
+from pybetterleaks import ScanFailedError, scan_dir
+
+try:
+    result = scan_dir(".", config_path=".betterleaks.toml", raise_on_error=True)
+except ScanFailedError as exc:
+    print(exc.code, exc.errors)
+```
+
 ## Git Worktree Scans
 
 ```python
@@ -140,5 +151,5 @@ No `go install`, no Betterleaks CLI, and no install-time native binary download.
 uv run --group docs mkdocs serve
 ```
 
-The published HTML site is built by GitHub Actions from the Markdown files in
-`docs/`.
+The published HTML site is built by GitHub Actions from the public Markdown
+files configured in `mkdocs.yml`.

@@ -39,7 +39,9 @@ CI/CD:
 - CI, Wheels, E2E, Docs, and Publish workflows are consistently green
 - published wheels are verified from PyPI in a temporary virtual environment
 - release checksums are generated and retained
-- GitHub release notes are templated or generated
+- release checksums are verified before publishing
+- GitHub release notes are generated and attach `SHA256SUMS`
+- GitHub artifact attestations cover wheels and checksums
 - PyPI trusted publishing stays tokenless
 
 Docs:
@@ -70,9 +72,9 @@ Security and supply chain:
 - release notes state the bundled Betterleaks version
 - validation env var behavior is documented
 - fixtures are synthetic and non-operational
-- checksums are published
-- SBOM and provenance are either implemented or explicitly deferred with an
-  owner decision
+- checksums are published and verified
+- provenance is implemented through GitHub artifact attestations
+- SBOM is explicitly deferred with an owner decision
 
 ## Not Required For v1.0
 

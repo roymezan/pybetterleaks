@@ -63,6 +63,18 @@ See [v0.3 plan](v0.3-plan.md) for implementation details and open decisions.
 See [v0.4 plan](v0.4-plan.md) for implementation details and acceptance
 criteria.
 
+## v0.5
+
+- Release artifact inspection before wheel upload and again before PyPI
+  publishing.
+- Checksum verification after `SHA256SUMS` generation.
+- GitHub release notes generated from tags with `SHA256SUMS` attached.
+- GitHub artifact attestations for wheels and checksums.
+- Documented supply-chain story, deprecation policy, and SBOM decision.
+
+See [v0.5 plan](v0.5-plan.md) for implementation details and acceptance
+criteria.
+
 ## Later
 
 - Streaming scan result APIs for very large scans.

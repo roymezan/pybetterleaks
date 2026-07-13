@@ -25,10 +25,17 @@ Already implemented:
 - uv-managed Python environment
 - MkDocs Material documentation site with generated API reference
 - Docker E2E for a glibc Python runtime image
+- CI coverage job builds the native bridge so native smoke tests are included
 - documented musllinux/Alpine unsupported status
 - synthetic benchmarks with optional Betterleaks CLI comparison
 - wheel builds for supported non-musl platforms
 - release checksum tooling
+- release checksum verification
+- wheel artifact inspection in CI and publish workflows
+- GitHub release-note generation with `SHA256SUMS` attachment
+- GitHub artifact attestations for release wheels and checksums
+- documented deprecation policy
+- documented supply-chain and SBOM decision
 
 ## Per-Release Checklist
 
@@ -44,6 +51,8 @@ These are recurring checks before tagging and publishing a new release.
 - Confirm `pybetterleaks/py.typed` ships in wheels.
 - Confirm no install-time downloads occur.
 - Confirm no musllinux wheels are published.
+- Confirm GitHub release notes exist and `SHA256SUMS` is attached.
+- Confirm release artifact attestations exist.
 - Prepare release notes with:
   - Python package version
   - bundled Betterleaks version `v1.6.1`
@@ -217,7 +226,6 @@ Future platform tasks:
 
 - Linux arm64 wheels if CI capacity and demand justify them.
 - Wheel-installed benchmark smoke tests.
-- Better wheel artifact inspection in CI.
 - Confirm wheel tags are never `py3-none-any`.
 - Keep sdists disabled or clearly source-build-only.
 
@@ -266,7 +274,6 @@ Possible future choices:
 - Keep post-publish PyPI smoke tests running from a temporary virtual
   environment.
 - Keep `CIBW_SKIP: "*-musllinux_*"` until Alpine is genuinely supported.
-- Add release-note generation or a release template.
 - Confirm publish workflow uses trusted publishing only.
 - Do not store a PyPI token.
 
@@ -299,19 +306,23 @@ Future benchmark tasks:
 - Add a streaming guide once iterators exist.
 - Expand generated API docs with examples for every public function.
 - Keep every README command tested or marked illustrative.
-- Add release notes template.
-- Add security/supply-chain page.
 - Add wheel/platform troubleshooting page if install questions grow.
 - Keep `docs/backlog.md` updated after each design decision.
 
 ## Supply Chain And Release Trust
 
+Current baseline:
+
+- Release checksums are generated and verified.
+- `SHA256SUMS` is attached to GitHub releases.
+- GitHub artifact attestations cover release wheels and checksums.
+- PyPI trusted publishing is tokenless.
+- Wheel artifacts are inspected before upload and before publish.
+
 Future tasks:
 
-- SBOM generation.
-- Artifact signing.
-- Provenance/attestations.
-- GitHub release checksum publication.
+- SBOM generation before `1.0.0` or before publishing sdists.
+- Artifact signing beyond GitHub artifact attestations if users need it.
 - Verify Betterleaks module checksum before release.
 - Document bundled Betterleaks version in every release note.
 - Re-run full Python, Go, wheel, and Docker E2E gates before tags.
@@ -355,7 +366,7 @@ Future tasks:
 - Linux arm64 wheels.
 - Alpine sidecar worker only if the no-subprocess promise changes.
 - Provider-specific validation presets.
-- SBOM/signing/provenance as release defaults.
+- SBOM generation and optional artifact signing as release defaults.
 - Public benchmark dashboard.
 - More polished website and examples.
 
@@ -368,7 +379,7 @@ Future tasks:
 - Should `scan_git` default stay `worktree` after more scopes exist?
 - Which future upstream config fields are worth modeling before users request
   them?
-- Should SBOM/signing be required before PyPI publishing, or added after the
-  first public release?
+- Should SBOM generation be required before `1.0.0`, or only when sdists are
+  supported?
 - Should release versioning stay Python-native (`0.x.y`) rather than matching
   Betterleaks (`1.6.1`)?

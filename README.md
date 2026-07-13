@@ -36,7 +36,7 @@ PyBetterleaks wraps the Betterleaks Go engine through a tiny `ctypes` JSON ABI
 and returns typed Python dataclasses. It is built for CI jobs, Python services,
 notebooks, agent tools, and Docker images that should stay simple.
 
-> Status: alpha. PyPI wheels are published for CPython 3.9-3.14 on supported
+> Status: alpha. PyPI wheels are published for CPython 3.9-3.15 on supported
 > glibc Linux, macOS, and Windows targets. Musllinux/Alpine remains unsupported
 > for the current Go `c-shared` design; see
 > [Platforms](#platforms).
@@ -251,7 +251,9 @@ No fake charts.
 - the bundled Betterleaks pin is documented in `docs/betterleaks-pin.md`
 - CI checks that `go.mod`, `go.sum`, and the bridge version constant agree
 - wheels are built in GitHub Actions
-- release artifacts get SHA256 checksums
+- release artifacts get SHA256 checksums and checksum verification
+- GitHub releases attach `SHA256SUMS`
+- GitHub artifact attestations tie wheels back to the release workflow
 - PyPI publication uses trusted publishing
 - runtime installs never download native binaries
 - wheel smoke tests import the package, run `betterleaks_version()`, scan text,

@@ -24,6 +24,15 @@ The public API is intentionally small and typed.
         - Finding
         - ScanError
         - PyBetterleaksError
+        - ScanFailedError
+        - ScanConfigError
+        - ScanTargetError
+        - ScanTimeoutError
+        - UnsupportedScanError
+        - InvalidScanRequestError
+        - NativeScanError
+        - raise_for_errors
+        - scan_exception_from_result
         - ConfigFormatError
         - NativeLibraryError
         - NativeLibraryNotFoundError

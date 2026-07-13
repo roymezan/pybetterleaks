@@ -12,6 +12,7 @@ from ._native import betterleaks_version as _native_betterleaks_version
 from ._native import cancel_scan_json as _native_cancel_scan_json
 from ._native import scan_json as _native_scan_json
 from .config import BetterleaksConfig
+from .exceptions import raise_for_errors
 from .models import ScanResult
 
 PathInput = Union[str, os.PathLike[str]]
@@ -28,6 +29,7 @@ def scan_text(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
     _request_id: Optional[str] = None,
 ) -> ScanResult:
     """Scan an in-memory text fragment for secrets.
@@ -40,6 +42,7 @@ def scan_text(
         validation_env_vars: Environment variable names validation Expr may read.
         redact: Replace secret values in findings with `REDACTED`.
         timeout_seconds: Optional positive scan deadline in seconds.
+        raise_on_error: Raise a typed `ScanFailedError` subclass for structured scan errors.
 
     Returns:
         A typed scan result containing findings, structured native errors, and
@@ -48,6 +51,7 @@ def scan_text(
     Raises:
         ValueError: If `timeout_seconds` is not positive.
         NativeLibraryError: If the native library cannot load or returns malformed data.
+        ScanFailedError: If `raise_on_error` is true and Betterleaks returns scan errors.
     """
     return _scan(
         mode="text",
@@ -59,6 +63,7 @@ def scan_text(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         request_id=_request_id,
     )
 
@@ -72,6 +77,7 @@ def scan_dir(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
     _request_id: Optional[str] = None,
 ) -> ScanResult:
     """Scan a directory with the bundled Betterleaks engine.
@@ -84,6 +90,7 @@ def scan_dir(
         validation_env_vars: Environment variable names validation Expr may read.
         redact: Replace secret values in findings with `REDACTED`.
         timeout_seconds: Optional positive scan deadline in seconds.
+        raise_on_error: Raise a typed `ScanFailedError` subclass for structured scan errors.
 
     Returns:
         A typed scan result. Expected scan failures, such as an invalid config
@@ -93,6 +100,7 @@ def scan_dir(
     Raises:
         ValueError: If `timeout_seconds` is not positive.
         NativeLibraryError: If the native library cannot load or returns malformed data.
+        ScanFailedError: If `raise_on_error` is true and Betterleaks returns scan errors.
     """
     return _scan(
         mode="dir",
@@ -104,6 +112,7 @@ def scan_dir(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         request_id=_request_id,
     )
 
@@ -118,6 +127,7 @@ def scan_git(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
     _request_id: Optional[str] = None,
 ) -> ScanResult:
     """Scan a local Git worktree without invoking the Git executable.
@@ -131,6 +141,7 @@ def scan_git(
         validation_env_vars: Environment variable names validation Expr may read.
         redact: Replace secret values in findings with `REDACTED`.
         timeout_seconds: Optional positive scan deadline in seconds.
+        raise_on_error: Raise a typed `ScanFailedError` subclass for structured scan errors.
 
     Returns:
         A typed scan result. Invalid repositories are represented as structured
@@ -139,6 +150,7 @@ def scan_git(
     Raises:
         ValueError: If `scope` is unsupported or `timeout_seconds` is not positive.
         NativeLibraryError: If the native library cannot load or returns malformed data.
+        ScanFailedError: If `raise_on_error` is true and Betterleaks returns scan errors.
     """
     if scope not in SUPPORTED_GIT_SCOPES:
         supported = ", ".join(repr(value) for value in SUPPORTED_GIT_SCOPES)
@@ -154,6 +166,7 @@ def scan_git(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         request_id=_request_id,
     )
 
@@ -167,6 +180,7 @@ async def scan_text_async(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
 ) -> ScanResult:
     """Async wrapper for `scan_text` with cooperative native cancellation."""
     request_id = str(uuid.uuid4())
@@ -179,6 +193,7 @@ async def scan_text_async(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         _request_id=request_id,
     )
     return await _run_cancellable(call, request_id)
@@ -193,6 +208,7 @@ async def scan_dir_async(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
 ) -> ScanResult:
     """Async wrapper for `scan_dir` with cooperative native cancellation."""
     request_id = str(uuid.uuid4())
@@ -205,6 +221,7 @@ async def scan_dir_async(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         _request_id=request_id,
     )
     return await _run_cancellable(call, request_id)
@@ -220,6 +237,7 @@ async def scan_git_async(
     validation_env_vars: Optional[Sequence[str]] = None,
     redact: bool = True,
     timeout_seconds: Optional[float] = None,
+    raise_on_error: bool = False,
 ) -> ScanResult:
     """Async wrapper for `scan_git` with cooperative native cancellation."""
     request_id = str(uuid.uuid4())
@@ -233,6 +251,7 @@ async def scan_git_async(
         validation_env_vars=validation_env_vars,
         redact=redact,
         timeout_seconds=timeout_seconds,
+        raise_on_error=raise_on_error,
         _request_id=request_id,
     )
     return await _run_cancellable(call, request_id)
@@ -254,6 +273,7 @@ def _scan(
     validation_env_vars: Optional[Sequence[str]],
     redact: bool,
     timeout_seconds: Optional[float],
+    raise_on_error: bool,
     request_id: Optional[str],
 ) -> ScanResult:
     if config is not None and config_path is not None:
@@ -271,7 +291,10 @@ def _scan(
         redact=redact,
         timeout_seconds=timeout_seconds,
     )
-    return ScanResult.from_native_response(_native_scan_json(payload))
+    result = ScanResult.from_native_response(_native_scan_json(payload))
+    if raise_on_error:
+        raise_for_errors(result)
+    return result
 
 
 def _scan_payload(

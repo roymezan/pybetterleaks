@@ -3,7 +3,14 @@ import threading
 from pathlib import Path
 
 import pytest
-from pybetterleaks import BetterleaksConfig, Rule, scanner
+from pybetterleaks import (
+    BetterleaksConfig,
+    Rule,
+    ScanConfigError,
+    ScanTargetError,
+    scan_exception_from_result,
+    scanner,
+)
 
 
 def test_scan_text_serializes_request(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -61,6 +68,92 @@ def test_scan_dir_serializes_path_inputs(monkeypatch: pytest.MonkeyPatch, tmp_pa
     assert captured["config_path"] == str(config_path)
     assert captured["config_toml"] is None
     assert result.ok
+
+
+def test_scan_returns_structured_errors_by_default(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    def fake_scan_json(payload):
+        return {
+            "ok": False,
+            "betterleaks_version": "v1.6.1",
+            "findings": [],
+            "errors": [
+                {
+                    "code": "target_not_directory",
+                    "message": "scan_dir target is not a directory",
+                    "detail": str(tmp_path / "secret.txt"),
+                }
+            ],
+        }
+
+    monkeypatch.setattr(scanner, "_native_scan_json", fake_scan_json)
+
+    result = scanner.scan_dir(tmp_path / "secret.txt")
+
+    assert not result.ok
+    assert result.errors[0].code == "target_not_directory"
+    error = scan_exception_from_result(result)
+    assert isinstance(error, ScanTargetError)
+    assert error.result is result
+
+
+def test_scan_can_raise_typed_exception_for_structured_errors(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    def fake_scan_json(payload):
+        return {
+            "ok": False,
+            "betterleaks_version": "v1.6.1",
+            "findings": [],
+            "errors": [
+                {
+                    "code": "target_not_directory",
+                    "message": "scan_dir target is not a directory",
+                    "detail": str(tmp_path / "secret.txt"),
+                }
+            ],
+        }
+
+    monkeypatch.setattr(scanner, "_native_scan_json", fake_scan_json)
+
+    with pytest.raises(ScanTargetError) as exc_info:
+        scanner.scan_dir(tmp_path / "secret.txt", raise_on_error=True)
+
+    error = exc_info.value
+    assert error.code == "target_not_directory"
+    assert error.errors[0].message == "scan_dir target is not a directory"
+    assert error.result is not None
+    assert error.result.errors == list(error.errors)
+    assert "target_not_directory" in str(error)
+
+
+def test_scan_can_raise_config_exception_for_detector_errors(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    def fake_scan_json(payload):
+        return {
+            "ok": False,
+            "betterleaks_version": "v1.6.1",
+            "findings": [],
+            "errors": [
+                {
+                    "code": "detector_init_failed",
+                    "message": "failed to initialize Betterleaks detector",
+                    "detail": "missing.toml",
+                }
+            ],
+        }
+
+    monkeypatch.setattr(scanner, "_native_scan_json", fake_scan_json)
+
+    with pytest.raises(ScanConfigError) as exc_info:
+        scanner.scan_text("secret", config_path=tmp_path / "missing.toml", raise_on_error=True)
+
+    assert exc_info.value.code == "detector_init_failed"
 
 
 def test_scan_text_serializes_validation_env_vars(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -186,6 +279,38 @@ def test_scan_text_async_serializes_request_id(monkeypatch: pytest.MonkeyPatch) 
 
     assert result.ok
     assert captured["request_id"]
+
+
+def test_scan_dir_async_can_raise_typed_exception_for_structured_errors(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    def fake_scan_json(payload):
+        return {
+            "ok": False,
+            "betterleaks_version": "v1.6.1",
+            "findings": [],
+            "errors": [
+                {
+                    "code": "target_not_directory",
+                    "message": "scan_dir target is not a directory",
+                    "detail": str(tmp_path / "secret.txt"),
+                }
+            ],
+        }
+
+    async def run_scan() -> ScanTargetError:
+        with pytest.raises(ScanTargetError) as exc_info:
+            await scanner.scan_dir_async(tmp_path / "secret.txt", raise_on_error=True)
+        return exc_info.value
+
+    monkeypatch.setattr(scanner, "_native_scan_json", fake_scan_json)
+
+    error = asyncio.run(run_scan())
+
+    assert error.code == "target_not_directory"
+    assert error.result is not None
+    assert error.result.errors == list(error.errors)
 
 
 def test_scan_text_async_cancels_native_request(monkeypatch: pytest.MonkeyPatch) -> None:

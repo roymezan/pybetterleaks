@@ -15,7 +15,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pybetterleaks"
-version = "0.4.0"
+version = "0.5.0"
 description = "Native Python bindings for Betterleaks"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -47,11 +47,11 @@ universal pure Python wheel.
 Potential wheel target:
 
 ```text
-pybetterleaks-0.4.0-py3-none-manylinux_2_28_x86_64.whl
-pybetterleaks-0.4.0-py3-none-manylinux_2_28_aarch64.whl
-pybetterleaks-0.4.0-py3-none-macosx_11_0_arm64.whl
-pybetterleaks-0.4.0-py3-none-macosx_11_0_x86_64.whl
-pybetterleaks-0.4.0-py3-none-win_amd64.whl
+pybetterleaks-0.5.0-py3-none-manylinux_2_28_x86_64.whl
+pybetterleaks-0.5.0-py3-none-manylinux_2_28_aarch64.whl
+pybetterleaks-0.5.0-py3-none-macosx_11_0_arm64.whl
+pybetterleaks-0.5.0-py3-none-macosx_11_0_x86_64.whl
+pybetterleaks-0.5.0-py3-none-win_amd64.whl
 ```
 
 If the build backend emits CPython-specific tags such as `cp312-cp312`, that is
@@ -180,10 +180,14 @@ Recommended:
 - Pin Betterleaks versions.
 - Commit `go.sum`.
 - Upload checksums for wheels.
+- Verify checksums before publishing.
+- Attach checksums to GitHub releases.
+- Create GitHub artifact attestations for release artifacts.
 - Run smoke tests against installed wheels.
 - Avoid install-time downloads.
 - Avoid storing PyPI tokens if trusted publishing is available.
-- Consider SBOM and artifact signing after the first release.
+- Defer automated SBOM generation until the source-build story is stable or the
+  project approaches `1.0.0`.
 
 ## Naming Notes
 

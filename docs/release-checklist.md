@@ -18,6 +18,9 @@ claimed target platforms.
   `staticcheck ./...`, and `govulncheck ./...`.
 - Run `uv build --wheel` and confirm the wheel includes the native library and
   `py.typed`.
+- Run `uv run python scripts/inspect_wheels.py <wheel-dir>`.
+- Run `uv run python scripts/checksums.py <wheel-dir> --output ../release/SHA256SUMS`.
+- Run `uv run python scripts/checksums.py <wheel-dir> --verify ../release/SHA256SUMS`.
 - Run `uv build --sdist` and confirm the sdist does not include generated native
   libraries.
 - Run native smoke tests with the compiled library present.
@@ -31,15 +34,18 @@ claimed target platforms.
 
 ## CI Release Flow
 
-- Push a tag like `v0.4.0`.
+- Push a tag like `v0.5.0`.
 - GitHub Actions builds wheels on Linux, macOS, and Windows.
 - Every wheel must install and run `scripts/wheel_smoke.py`.
 - The Docker E2E workflow should build a local wheel, install it from `/tmp`,
   and run directory/text scans against fake fixture secrets.
-- `publish.yml` downloads wheel artifacts, writes `release/SHA256SUMS`, uploads
-  the checksum artifact, and publishes only wheel files from `dist`.
+- `publish.yml` downloads wheel artifacts, inspects them, writes
+  `release/SHA256SUMS`, verifies those checksums, attests the release artifacts,
+  uploads the checksum artifact, and publishes only wheel files from `dist`.
 - The publish workflow then runs `scripts/pypi_smoke.py` to install the
   published version from PyPI in a temporary virtual environment.
+- The publish workflow creates or updates GitHub release notes and attaches
+  `SHA256SUMS`.
 - Publish wheels to PyPI through trusted publishing only.
 - Do not publish sdists until source builds are explicitly supported.
 
@@ -66,4 +72,5 @@ reproducible.
 - Verify Docker install using `python:3.12-slim`.
 - Download a wheel and confirm `pybetterleaks/py.typed` is included.
 - Confirm no install-time downloads occur.
-- Publish checksum values with the GitHub release notes.
+- Confirm `SHA256SUMS` is attached to the GitHub release.
+- Confirm GitHub artifact attestations exist for wheels and checksums.

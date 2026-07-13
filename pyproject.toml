@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pybetterleaks"
-version = "0.4.0"
+version = "0.5.0"
 description = "Native Python bindings for Betterleaks"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -22,6 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Programming Language :: Go",
   "Topic :: Security",
   "Typing :: Typed",

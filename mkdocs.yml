@@ -6,6 +6,23 @@ repo_name: roymezan/pybetterleaks
 repo_url: https://github.com/roymezan/pybetterleaks
 edit_uri: blob/main/docs/
 
+exclude_docs: |
+  abi.md
+  ai-handoff.md
+  architecture.md
+  backlog.md
+  docs-map.md
+  implementation-notes.md
+  project-brief.md
+  release-checklist.md
+  roadmap.md
+  v0.2-plan.md
+  v0.3-plan.md
+  v0.4-plan.md
+  v0.5-plan.md
+  v1-readiness.md
+  workplan.md
+
 theme:
   name: material
   language: en
@@ -38,25 +55,13 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Configuration: configuration.md
-  - Benchmarks: benchmarks.md
   - API Reference: api.md
-  - Architecture: architecture.md
-  - ABI Contract: abi.md
-  - Betterleaks Pin: betterleaks-pin.md
-  - Packaging Notes: implementation-notes.md
-  - Release Checklist: release-checklist.md
+  - Benchmarks: benchmarks.md
   - Troubleshooting: troubleshooting.md
-  - v1.0 Readiness: v1-readiness.md
-  - Roadmap: roadmap.md
-  - Backlog: backlog.md
-  - v0.2 Plan: v0.2-plan.md
-  - v0.3 Plan: v0.3-plan.md
-  - v0.4 Plan: v0.4-plan.md
-  - Maintainer Handoff: ai-handoff.md
-  - Planning:
-      - Project Brief: project-brief.md
-      - Workplan: workplan.md
-      - Docs Map: docs-map.md
+  - Project Trust:
+      - Betterleaks Pin: betterleaks-pin.md
+      - Supply Chain: supply-chain.md
+      - Deprecation Policy: deprecation-policy.md
 
 plugins:
   - search

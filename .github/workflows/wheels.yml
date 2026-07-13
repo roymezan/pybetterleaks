@@ -53,8 +53,9 @@ jobs:
       - name: Build wheels
         run: uv run cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-* cp314-* cp315-*"
           CIBW_SKIP: "*-musllinux_*"
+          CIBW_ENABLE: "cpython-prerelease"
           CIBW_ARCHS: "${{ matrix.cibw_archs }}"
           CIBW_BEFORE_ALL_LINUX: >
             bash scripts/install_go_linux_ci.sh
@@ -66,6 +67,9 @@ jobs:
             python scripts/build_native.py
           CIBW_TEST_COMMAND: >
             python {project}/scripts/wheel_smoke.py
+
+      - name: Inspect wheel artifacts
+        run: uv run python scripts/inspect_wheels.py wheelhouse
 
       - uses: actions/upload-artifact@v4
         with:

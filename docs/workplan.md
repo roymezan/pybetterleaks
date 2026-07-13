@@ -219,7 +219,12 @@ Deliverables:
 - Use GitHub trusted publishing for PyPI.
 - Separate build and publish jobs.
 - Generate checksums for wheel artifacts.
-- Consider SBOM generation after the first working release.
+- Verify checksums before publishing.
+- Inspect wheel artifacts before upload and publishing.
+- Attach checksums to GitHub releases.
+- Create provenance attestations for release artifacts.
+- Defer SBOM generation until the source-build story is stable or the project
+  approaches `1.0.0`.
 
 Rules:
 
@@ -295,3 +300,12 @@ v0.4 update:
   future work into the implementation.
 - Legacy allowlist dataclasses remain intentionally unsupported; use modern
   Expr filters instead.
+
+v0.5 update:
+
+- Release hardening moved from future work into the implementation.
+- Wheel artifacts are inspected before upload and before publishing.
+- Checksums are generated, verified, and attached to GitHub releases.
+- GitHub artifact attestations provide provenance for wheels and checksums.
+- Automated SBOM generation remains deferred until the source-build story is
+  stable or the project approaches `1.0.0`.

@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-24.04
     environment: pypi
     permissions:
+      contents: write
+      attestations: write
       id-token: write
 
     steps:
@@ -28,8 +30,21 @@ jobs:
           pattern: wheels-*
           merge-multiple: true
 
+      - name: Inspect wheel artifacts
+        run: python scripts/inspect_wheels.py dist --expected-version "${GITHUB_REF_NAME#v}"
+
       - name: Generate checksums
         run: python scripts/checksums.py dist --output ../release/SHA256SUMS
+
+      - name: Verify checksums
+        run: python scripts/checksums.py dist --verify ../release/SHA256SUMS
+
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/*.whl
+            release/SHA256SUMS
 
       - uses: actions/upload-artifact@v4
         with:
@@ -42,3 +57,16 @@ jobs:
 
       - name: Verify PyPI install
         run: python scripts/pypi_smoke.py --version "${GITHUB_REF_NAME#v}" --retries 12 --retry-delay 10
+
+      - name: Publish GitHub release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release/SHA256SUMS --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" release/SHA256SUMS \
+              --verify-tag \
+              --generate-notes \
+              --title "$GITHUB_REF_NAME"
+          fi

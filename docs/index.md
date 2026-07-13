@@ -57,6 +57,7 @@ Python app
 - self-contained platform wheels
 - bundled Betterleaks `v1.6.1`
 - release artifact checksums
+- release artifact inspection and provenance attestations
 - Docker packaging E2E
 - no runtime binary downloads
 - no runtime Betterleaks CLI dependency
@@ -68,7 +69,7 @@ library design.
 
 - [Getting Started](getting-started.md)
 - [Configuration](configuration.md)
-- [Benchmarks](benchmarks.md)
 - [API Reference](api.md)
-- [Architecture](architecture.md)
-- [Release Checklist](release-checklist.md)
+- [Benchmarks](benchmarks.md)
+- [Troubleshooting](troubleshooting.md)
+- [Supply Chain](supply-chain.md)
