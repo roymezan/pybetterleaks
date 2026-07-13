@@ -98,4 +98,4 @@ See [v0.6 plan](v0.6-plan.md) for implementation details and open decisions.
 - Linux arm64 wheels if demand and CI capacity justify them.
 - SBOM generation.
 - Artifact signing.
-- Published benchmark tables against Betterleaks CLI and subprocess wrappers.
+- Cross-platform benchmark dashboard and trend history.

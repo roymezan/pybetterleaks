@@ -4,6 +4,27 @@ All notable PyBetterleaks release notes live here. PyBetterleaks uses its own
 Python package version and documents the bundled Betterleaks engine version
 separately.
 
+## 0.6.2 - 2026-07-13
+
+Release theme: benchmark documentation freshness.
+
+Bundled Betterleaks: `v1.6.1`
+
+### Added
+
+- Added a benchmark docs updater that refreshes the managed section of
+  `docs/benchmarks.md` from generated benchmark Markdown.
+- Added unit coverage for benchmark-doc marker replacement, heading demotion,
+  comment escaping, and stale-doc detection.
+- Added a manual benchmark workflow option, `update_docs`, that can commit a
+  refreshed benchmark docs snapshot back to the workflow branch.
+
+### Changed
+
+- Replaced the stale v0.2 benchmark table with a fresh generated snapshot.
+- The benchmark workflow now uploads a refreshed `docs/benchmarks.md` artifact
+  alongside raw benchmark JSON/Markdown outputs.
+
 ## 0.6.1 - 2026-07-13
 
 Release theme: Betterleaks pin verification and release-flow hardening.
