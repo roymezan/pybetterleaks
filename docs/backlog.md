@@ -42,6 +42,7 @@ Already implemented:
 - post-release audit for PyPI metadata, GitHub release assets, checksums, and
   install smoke checks
 - benchmark JSON/Markdown artifacts in CI
+- benchmark docs snapshot refresh in CI artifacts
 - wheel-installed benchmark smoke tests
 - issue templates, PR template, and `SECURITY.md`
 - README hero visual
@@ -301,11 +302,10 @@ Future benchmark tasks:
 
 - Add cold-start versus warm-call measurements.
 - Add repository-shaped fixtures with mixed file types.
-- Add wheel-installed benchmarks from clean virtual environments.
-- Track benchmark results by platform in CI artifacts.
+- Promote wheel-installed smoke benchmarks into tracked platform metrics.
+- Track benchmark result trends by platform over time.
 - Compare against:
   - Betterleaks CLI
-  - subprocess wrapper baseline
   - previous PyBetterleaks releases
 - Add pprof/flamegraph guidance for bridge profiling.
 - Avoid broad performance claims beyond the measured scenarios.
