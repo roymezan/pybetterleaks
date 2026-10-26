@@ -3,6 +3,21 @@
 This backlog is the project-wide parking lot for everything discussed but not
 fully shipped, plus decisions that should stay visible for future maintainers.
 
+## Upcoming Priorities
+
+See [Roadmap](roadmap.md) for the current order and completion criteria:
+
+1. Stable engine upgrade, compatibility checks, and default-rule performance
+   baselines, with an early upstream v2 compatibility assessment.
+2. Measured scanner/config reuse with bounded resources, config invalidation,
+   concurrent-call isolation, cancellation, and memory-growth checks.
+3. Linux arm64 manylinux wheel builds and installed-wheel/Docker verification.
+4. Newer finding metadata and a CLI distribution design, with API compatibility
+   and nested redaction checks before implementation.
+
+These are planned tasks. CLI packaging and a reusable scanner public API remain
+open design decisions; collaboration with other implementations is welcome.
+
 ## Current Baseline
 
 Already implemented:
@@ -237,7 +252,8 @@ Supported targets:
 
 Future platform tasks:
 
-- Linux arm64 wheels if CI capacity and demand justify them.
+- Linux arm64 manylinux wheels are a following priority; evaluate native ARM
+  CI and require installed-wheel and Docker runtime verification.
 - Confirm wheel tags are never `py3-none-any`.
 - Keep sdists disabled or clearly source-build-only.
 
@@ -300,7 +316,8 @@ Already learned:
 
 Future benchmark tasks:
 
-- Add cold-start versus warm-call measurements.
+- Add default-rule cold-start, first-scan, and warm-call measurements, plus
+  clean inputs, large inputs, and large result sets.
 - Add repository-shaped fixtures with mixed file types.
 - Promote wheel-installed smoke benchmarks into tracked platform metrics.
 - Track benchmark result trends by platform over time.
@@ -375,7 +392,6 @@ Future tasks:
 - Native streaming for very large scans.
 - Rich Git history and diff scans without runtime subprocesses.
 - Provider wrappers for GitHub, GitLab, Hugging Face, and S3.
-- Linux arm64 wheels.
 - Alpine sidecar worker only if the no-subprocess promise changes.
 - Provider-specific validation presets.
 - SBOM generation and optional artifact signing as release defaults.

@@ -89,11 +89,14 @@ These should not block `1.0.0`:
 
 ## Suggested Path
 
-- `0.3.x`: polish README/PyPI text, add post-publish PyPI smoke tests, and close
-  obvious release-doc gaps.
-- `0.4.0`: config ergonomics, async cancellation hardening, roadmap/backlog
-  cleanup, and release metadata refresh.
-- `0.5.0`: release hardening, GitHub release notes, checksum publication,
-  artifact inspection, deprecation policy, and SBOM/provenance decision.
-- `1.0.0rc1`: freeze API and run a full release rehearsal.
+- Upgrade the bundled engine and establish default-rule performance baselines.
+- Review upstream v2 compatibility and settle any public scanner/model API
+  changes before freezing the API. See [Roadmap](roadmap.md) for priorities.
+- Validate reuse, concurrency, cancellation, and resource lifecycle if scanner
+  caching or a reusable scanner API is introduced.
+- `1.0.0rc1`: freeze the API and run a full release rehearsal.
 - `1.0.0`: publish after the release candidate survives real use.
+
+CLI distribution and Linux arm64 wheels are useful roadmap work, but do not
+block v1.0. Existing supported platforms and SDK behavior must meet the checks
+above.

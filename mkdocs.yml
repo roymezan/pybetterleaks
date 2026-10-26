@@ -15,7 +15,6 @@ exclude_docs: |
   implementation-notes.md
   project-brief.md
   release-checklist.md
-  roadmap.md
   v0.2-plan.md
   v0.3-plan.md
   v0.4-plan.md
@@ -59,6 +58,7 @@ nav:
   - Git Scanning: git-scanning.md
   - API Reference: api.md
   - Benchmarks: benchmarks.md
+  - Roadmap: roadmap.md
   - Troubleshooting: troubleshooting.md
   - Project Trust:
       - Betterleaks Pin: betterleaks-pin.md
