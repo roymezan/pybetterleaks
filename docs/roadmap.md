@@ -1,5 +1,78 @@
 # Roadmap
 
+Updated October 27, 2026. The priorities below guide upcoming work; they are
+planned, not shipped, and release numbers and dates remain open.
+
+PyBetterleaks continues to focus on an importable Python SDK with bundled native
+libraries, typed APIs, and in-process scanning. Contributions and proposals to
+combine efforts are welcome. The priorities incorporate the
+[upstream Python distribution discussion](https://github.com/betterleaks/betterleaks/issues/46)
+and our review of
+[betterleaks-py](https://github.com/as1605/betterleaks-py). Collaboration is being
+[discussed](https://github.com/roymezan/pybetterleaks/issues/6); no merger or shared
+maintenance arrangement has been agreed.
+
+## Next Release: Engine Refresh And Performance Baseline
+
+- Upgrade the bundled Betterleaks engine from `v1.6.1` to a verified current
+  stable release, updating module checksums, bridge code, and version docs.
+- Prove compatibility for typed configuration, validation, redaction, structured
+  errors, timeouts, and async cancellation. Add fixtures for newly supported
+  detections and run Python, Go, wheel, and Docker E2E release checks.
+- Measure default-rule scans as well as the existing synthetic-rule benchmark.
+  Separate process startup, first-scan setup, and repeated calls; include clean
+  and secret-containing inputs, directories, large inputs, and large result sets.
+- Assess upstream v2 API, configuration, and finding-model changes before
+  committing to a reusable scanner API or freezing our public API for v1.0.
+  A stable-engine update does not imply adopting a prerelease engine.
+
+## Following Priorities: Reuse And Platform Coverage
+
+- Investigate reusable compiled configuration or an explicit `Scanner` object,
+  using the baseline above to establish whether it improves repeated scans.
+- Preserve per-call validation settings, redaction, deadlines, and cancellation.
+  Define concurrency safety, bounded resource use, cleanup, and config-change
+  invalidation before introducing caching.
+- Add repeated-scan, concurrent-scan, cancellation, and memory-growth checks.
+  Repeated scans without a crash alone do not establish that memory is bounded.
+- Promote Linux arm64 manylinux wheels from the long-term backlog. Evaluate a
+  native ARM CI runner and require installed-wheel smoke tests and a no-Go Docker
+  runtime check before documenting support.
+
+## Design Work: Newer Findings And Terminal Usage
+
+- Plan additive Python access to upstream v2 confidence, correlated component
+  sets, encoding information, and structured match details where supported.
+  Preserve existing finding fields and verify nested secrets are redacted.
+- Evaluate distributing the upstream CLI to serve terminal, `uvx`, and `pipx`
+  workflows. Decide between bundling it with the SDK and a companion
+  distribution before implementation; installation commands remain undecided.
+- If a CLI is distributed, align its engine version with the SDK, expose version
+  information clearly, and test command arguments, exit codes, platform assets,
+  checksums, and license notices. Preserve in-process execution for SDK scans.
+- Document Python and terminal workflows separately once terminal support ships.
+
+## Path To v1.0
+
+Complete the engine compatibility assessment and settle any public scanner/model
+API changes before an API freeze. Then follow the
+[v1.0 readiness checklist](https://github.com/roymezan/pybetterleaks/blob/main/docs/v1-readiness.md),
+run a release-candidate rehearsal, and validate real usage before declaring the
+API stable. CLI distribution and Linux arm64 support do not block v1.0.
+
+## Deferred
+
+- Streaming scan result APIs for very large scans.
+- Git history/diff scopes and GitHub/GitLab/Hugging Face/S3 source wrappers.
+- Further Alpine/musllinux work until there is a credible fix for the Go/musl
+  shared-library loader failure.
+- SBOM generation, additional artifact signing, and a cross-platform benchmark
+  dashboard, subject to the release-readiness decisions.
+
+## Released Milestones
+
+The sections below record the features delivered through v0.6.
+
 ## v0.1
 
 - `scan_text`
@@ -24,7 +97,7 @@
 - Musllinux/Alpine investigation. Official wheels are unsupported and remain
   blocked by the current Go/musl `initial-exec TLS` loader failure.
 
-See [v0.2 plan](v0.2-plan.md) for implementation details and acceptance
+See [v0.2 plan](https://github.com/roymezan/pybetterleaks/blob/main/docs/v0.2-plan.md) for implementation details and acceptance
 criteria.
 
 ## v0.3
@@ -34,7 +107,7 @@ criteria.
 - Release hardening: PyPI trusted publishing, post-publish PyPI smoke tests,
   v1 readiness docs, benchmark docs, and stronger wheel smoke coverage.
 
-See [v0.3 plan](v0.3-plan.md) for implementation details and open decisions.
+See [v0.3 plan](https://github.com/roymezan/pybetterleaks/blob/main/docs/v0.3-plan.md) for implementation details and open decisions.
 
 ## v0.4
 
@@ -60,7 +133,7 @@ See [v0.3 plan](v0.3-plan.md) for implementation details and open decisions.
 - Roadmap/backlog cleanup now that config coverage for Betterleaks `v1.6.1`
   stable fields is closed.
 
-See [v0.4 plan](v0.4-plan.md) for implementation details and acceptance
+See [v0.4 plan](https://github.com/roymezan/pybetterleaks/blob/main/docs/v0.4-plan.md) for implementation details and acceptance
 criteria.
 
 ## v0.5
@@ -72,7 +145,7 @@ criteria.
 - GitHub artifact attestations for wheels and checksums.
 - Documented supply-chain story, deprecation policy, and SBOM decision.
 
-See [v0.5 plan](v0.5-plan.md) for implementation details and acceptance
+See [v0.5 plan](https://github.com/roymezan/pybetterleaks/blob/main/docs/v0.5-plan.md) for implementation details and acceptance
 criteria.
 
 ## v0.6
@@ -89,13 +162,4 @@ criteria.
 - Project hygiene files: issue templates, PR template, and `SECURITY.md`.
 - README visual polish and dedicated Git scanning docs.
 
-See [v0.6 plan](v0.6-plan.md) for implementation details and open decisions.
-
-## Later
-
-- Streaming scan result APIs for very large scans.
-- GitHub/GitLab/Hugging Face/S3 source wrappers.
-- Linux arm64 wheels if demand and CI capacity justify them.
-- SBOM generation.
-- Artifact signing.
-- Cross-platform benchmark dashboard and trend history.
+See [v0.6 plan](https://github.com/roymezan/pybetterleaks/blob/main/docs/v0.6-plan.md) for implementation details and open decisions.
